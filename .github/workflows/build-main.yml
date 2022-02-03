@@ -28,7 +28,7 @@ jobs:
         run: npm run test:ci
   tag:
     runs-on: ubuntu-latest
-    needs: [lint, update-dist]
+    needs: [lint]
     steps:
       - uses: actions/checkout@v2
       - name: autotag
