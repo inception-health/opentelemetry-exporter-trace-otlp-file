@@ -19,19 +19,33 @@ export class FileTraceExporter
 
   constructor(config: FileExporterNodeConfig) {
     super(config);
-    this._stream = fs.createWriteStream(this.filePath, { flags: "a" });
+    this._stream = this._createWriteStream();
   }
 
-  onShutdown(): void {
-    try {
-      this._stream.end();
-    } finally {
-      this._isShutdown = true;
+  private _createWriteStream(): fs.WriteStream {
+    if (this._stream && !this.isShutdown()) {
+      return this._stream;
     }
+    return fs.createWriteStream(this.filePath, { flags: "a" });
+  }
+  async onShutdown(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      try {
+        this._stream.end(resolve);
+      } catch (error) {
+        /* istanbul ignore next */
+        reject(error);
+      }
+    });
+  }
+
+  isShutdown(): boolean {
+    return this._isShutdown && !this._stream.writable;
   }
 
   onInit(): void {
     this._isShutdown = false;
+    this._stream = this._createWriteStream();
   }
 
   send(
@@ -39,6 +53,7 @@ export class FileTraceExporter
     onSuccess: () => void,
     onError: (error: Error) => void
   ): void {
+    /* istanbul ignore if */
     if (this._isShutdown) {
       diag.debug("Shutdown already started. Cannot send objects");
       return;
@@ -47,6 +62,7 @@ export class FileTraceExporter
 
     const promise = new Promise<void>((resolve, reject) => {
       this._stream.write(JSON.stringify(serviceRequest) + "\n", (err) => {
+        /* istanbul ignore if */
         if (err) {
           reject(err);
         } else {

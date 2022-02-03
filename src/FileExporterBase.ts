@@ -15,9 +15,7 @@ export abstract class FileExporterBase<
   private _shuttingDownPromise: Promise<void> = Promise.resolve();
   protected _sendingPromises: Promise<unknown>[] = [];
 
-  /**
-   * @param config
-   */
+  /* istanbul ignore next */
   constructor(config: T = {} as T) {
     this.filePath = config.filePath;
 
@@ -34,11 +32,6 @@ export abstract class FileExporterBase<
     this.onInit(config);
   }
 
-  /**
-   * Export items.
-   * @param items
-   * @param resultCallback
-   */
   export(
     items: ExportItem[],
     resultCallback: (result: ExportResult) => void
@@ -82,32 +75,24 @@ export abstract class FileExporterBase<
   /**
    * Shutdown the exporter.
    */
-  shutdown(): Promise<void> {
+  async shutdown(): Promise<void> {
     if (this._isShutdown) {
       diag.debug("shutdown already started");
       return this._shuttingDownPromise;
     }
     this._isShutdown = true;
     diag.debug("shutdown started");
-    this._shuttingDownPromise = new Promise((resolve, reject) => {
-      Promise.resolve()
-        .then(() => {
-          return this.onShutdown();
-        })
-        .then(() => {
-          return Promise.all(this._sendingPromises);
-        })
-        .then(() => {
-          resolve();
-        })
-        .catch((e) => {
-          reject(e);
-        });
-    });
-    return this._shuttingDownPromise;
+    this._shuttingDownPromise = this._shutdown();
+    return await this._shuttingDownPromise;
+  }
+  private async _shutdown(): Promise<void> {
+    await this.onShutdown();
+    await Promise.all(this._sendingPromises);
   }
 
-  abstract onShutdown(): void;
+  abstract isShutdown(): boolean;
+
+  abstract onShutdown(): Promise<void>;
   abstract onInit(config: T): void;
   abstract send(
     items: ExportItem[],

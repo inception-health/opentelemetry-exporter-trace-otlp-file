@@ -4,6 +4,10 @@ import { Resource } from "@opentelemetry/resources";
 import { FileTraceExporter } from "./FileTraceExporter";
 import { FileExporterNodeConfig } from "./types";
 import * as fs from "fs";
+import { ExportResultCode } from "@opentelemetry/core";
+import * as path from "path";
+
+const FILE_PATH = path.join(__dirname, "trace.log");
 
 export const mockedReadableSpan: ReadableSpan = {
   name: "documentFetch",
@@ -71,7 +75,7 @@ describe("FileTraceExporter", () => {
   describe("export", () => {
     beforeEach(() => {
       collectorExporterConfig = {
-        filePath: "trace.log",
+        filePath: FILE_PATH,
         attributes: {},
       };
       collectorExporter = new FileTraceExporter(collectorExporterConfig);
@@ -79,15 +83,84 @@ describe("FileTraceExporter", () => {
       spans.push(Object.assign({}, mockedReadableSpan));
     });
 
-    it("should open the connection", (done) => {
+    afterEach(() => {
+      if (fs.existsSync(FILE_PATH)) {
+        fs.unlinkSync(FILE_PATH);
+      }
+      return collectorExporter.shutdown();
+    });
+
+    it("should export traces to file", (done) => {
       collectorExporter.export(spans, () => {
         try {
-          expect(fs.existsSync("trace.log")).toBeTruthy();
+          expect(fs.existsSync(FILE_PATH)).toBeTruthy();
           done();
         } catch (error) {
           done(error);
-        } finally {
-          fs.unlinkSync("trace.log");
+        }
+      });
+    });
+  });
+
+  describe("shutdown", () => {
+    beforeEach(() => {
+      collectorExporterConfig = {
+        filePath: FILE_PATH,
+        attributes: {},
+        concurrencyLimit: 1,
+      };
+      collectorExporter = new FileTraceExporter(collectorExporterConfig);
+      spans = [];
+      spans.push(Object.assign({}, mockedReadableSpan));
+    });
+
+    afterEach(() => {
+      return collectorExporter.shutdown();
+    });
+
+    it("should shutdown", async () => {
+      await collectorExporter.shutdown();
+      expect(collectorExporter.isShutdown()).toBeTruthy();
+      collectorExporter.onInit();
+      expect(collectorExporter.isShutdown()).toBeFalsy();
+    });
+
+    it("should error exporting when shutdown", (done) => {
+      collectorExporter
+        .shutdown()
+        .then(() =>
+          collectorExporter.export(spans, (result) => {
+            expect(result.code).toEqual(ExportResultCode.FAILED);
+            done();
+          })
+        )
+        .catch(done);
+    });
+
+    it("should error exporting when over concurrency limit", (done) => {
+      const spy = jest.fn();
+      collectorExporter.export(spans, spy);
+      collectorExporter.export(spans, (result) => {
+        try {
+          expect(result.code).toEqual(ExportResultCode.FAILED);
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+    });
+
+    it("should error exporting when callback errors", (done) => {
+      const mockSend = jest.fn().mockImplementation(() => {
+        throw new Error("Send Error");
+      });
+      collectorExporter.send = mockSend;
+      collectorExporter.export(spans, (result) => {
+        try {
+          expect(result.error?.message).toEqual("Send Error");
+          done();
+        } catch (e) {
+          done(e);
         }
       });
     });
