@@ -4,7 +4,7 @@
     "noImplicitAny": true, // ts recommended
     "rootDir": "src",
     "baseUrl": "src",
-    "outDir": "lib",
+    "outDir": "dist",
     "resolveJsonModule": true
   },
   "exclude": ["jest.config.ts", "jest.setup.ts", "config.ts"]

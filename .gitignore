@@ -110,13 +110,13 @@ lib
 
 docker/
 
-!./dist/index.js
 ./src/*.js
 !jest.config.js
 !.dependency-cruiser.js
 *.d.ts
 node_modules
 .node-version
+dist/
 
 # CDK asset staging directory
 .cdk.staging
