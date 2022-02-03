@@ -26,33 +26,15 @@ jobs:
         run: npm run format:ci
       - name: run tests
         run: npm run test:ci
-  update-dist:
+  tag:
     runs-on: ubuntu-latest
-    needs: [lint]
+    needs: [lint, update-dist]
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: autotag
+        uses: butlerlogic/action-autotag@stable
+        env:
+          GITHUB_TOKEN: "${{ secrets.BUILD_PAT }}"
         with:
-          node-version: "16"
-          cache: "npm"
-      - name: npm ci
-        run: npm ci --omit=dev --ignore-scripts
-      - name: tsc
-        run: npm run package
-      - name: commit dist
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Add dist artifacts
-          file_pattern: dist
-  # tag:
-  #   runs-on: ubuntu-latest
-  #   needs: [lint, update-dist]
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: autotag
-  #       uses: butlerlogic/action-autotag@stable
-  #       env:
-  #         GITHUB_TOKEN: "${{ secrets.BUILD_PAT }}"
-  #       with:
-  #         strategy: package
-  #         tag_prefix: "v"
+          strategy: package
+          tag_prefix: "v"

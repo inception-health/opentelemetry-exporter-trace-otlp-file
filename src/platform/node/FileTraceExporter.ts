@@ -5,7 +5,6 @@ import { FileExporterBase } from "../../FileExporterBase";
 import { FileExporterNodeConfig } from "./types";
 import { toFileExportTraceServiceRequest } from "../../transform";
 import * as fs from "fs";
-import * as os from "os";
 
 export class FileTraceExporter
   extends FileExporterBase<
