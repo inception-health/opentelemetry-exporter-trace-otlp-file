@@ -83,11 +83,12 @@ describe("FileTraceExporter", () => {
       spans.push(Object.assign({}, mockedReadableSpan));
     });
 
-    afterEach(() => {
+    afterEach(async () => {
+      await collectorExporter.shutdown();
+
       if (fs.existsSync(FILE_PATH)) {
         fs.unlinkSync(FILE_PATH);
       }
-      return collectorExporter.shutdown();
     });
 
     it("should export traces to file", (done) => {
@@ -114,8 +115,12 @@ describe("FileTraceExporter", () => {
       spans.push(Object.assign({}, mockedReadableSpan));
     });
 
-    afterEach(() => {
-      return collectorExporter.shutdown();
+    afterEach(async () => {
+      await collectorExporter.shutdown();
+
+      if (fs.existsSync(FILE_PATH)) {
+        fs.unlinkSync(FILE_PATH);
+      }
     });
 
     it("should shutdown", async () => {
