@@ -11,6 +11,8 @@ dist
 .gitignore
 .eslintignore
 .eslintrc.json
+.npmignore
+.npmrc
 
 # DO lint the github actions, as they're just YAML.
 !.github

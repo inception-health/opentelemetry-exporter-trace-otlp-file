@@ -1,0 +1,7 @@
+**/*.test.ts
+src/*
+coverage/
+junit.xml
+.github/*
+.husky/*
+jest.config.js
