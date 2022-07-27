@@ -8,6 +8,7 @@ import { ExportResultCode } from "@opentelemetry/core";
 import * as path from "path";
 
 const FILE_PATH = path.join(__dirname, "trace.log");
+const EXPECTED_TRACE_FILE = path.join(__dirname, "__assets__", "otlptrace");
 
 export const mockedReadableSpan: ReadableSpan = {
   name: "documentFetch",
@@ -73,17 +74,23 @@ describe("FileTraceExporter", () => {
   let spans: ReadableSpan[];
 
   describe("export", () => {
-    beforeEach(() => {
+    let resultCode: ExportResultCode | undefined = undefined;
+    beforeAll((done) => {
       collectorExporterConfig = {
         filePath: FILE_PATH,
         attributes: {},
       };
       collectorExporter = new FileTraceExporter(collectorExporterConfig);
       spans = [];
+      resultCode = undefined;
       spans.push(Object.assign({}, mockedReadableSpan));
+      collectorExporter.export(spans, ({ code, error }) => {
+        resultCode = code;
+        done(error);
+      });
     });
 
-    afterEach(async () => {
+    afterAll(async () => {
       await collectorExporter.shutdown();
 
       if (fs.existsSync(FILE_PATH)) {
@@ -91,15 +98,18 @@ describe("FileTraceExporter", () => {
       }
     });
 
-    it("should export traces to file", (done) => {
-      collectorExporter.export(spans, () => {
-        try {
-          expect(fs.existsSync(FILE_PATH)).toBeTruthy();
-          done();
-        } catch (error) {
-          done(error);
-        }
-      });
+    it("should have result code of success", () => {
+      expect(resultCode).toEqual(ExportResultCode.SUCCESS);
+    });
+
+    it("should export traces to file", () => {
+      expect(fs.existsSync(FILE_PATH)).toBeTruthy();
+    });
+
+    it("should match snapshot", () => {
+      const trace = fs.readFileSync(FILE_PATH);
+      const expectedTrace = fs.readFileSync(EXPECTED_TRACE_FILE);
+      expect(trace).toEqual(expectedTrace);
     });
   });
 
