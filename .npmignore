@@ -5,3 +5,4 @@ junit.xml
 .github/*
 .husky/*
 jest.config.js
+!dist/*

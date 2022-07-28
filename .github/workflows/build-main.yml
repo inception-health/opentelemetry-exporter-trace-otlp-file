@@ -6,6 +6,7 @@ on:
       - "package-lock.json"
       - "package.json"
       - "action.yml"
+      - ".github/workflows/build-main.yml"
     branches:
       - main
 
@@ -55,6 +56,8 @@ jobs:
       - if: ${{ steps.release.outputs.release_created }}
         name: Install Dependencies
         run: npm ci --ignore-scripts
+      - if: ${{ steps.release.outputs.release_created }}
+        run: npm run build
       - if: ${{ steps.release.outputs.release_created }}
         name: Publish
         run: npm publish

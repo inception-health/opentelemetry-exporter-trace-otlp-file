@@ -8,14 +8,14 @@
     "dist"
   ],
   "scripts": {
-    "prepare": "husky install",
+    "postinstall": "husky install",
     "lint:fix": "eslint --cache --fix .",
     "lint:ci": "eslint .",
     "format:fix": "prettier --write .",
     "format:ci": "prettier --check .",
     "prebuild": "rimraf dist",
     "build": "tsc",
-    "prepublish": "npm run build",
+    "prepare": "npm run build",
     "test": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=./.env.test jest",
     "test:watch": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=./.env.test jest --watch",
     "test:ci": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=./.env.test jest --collect-coverage -ci"
