@@ -26,8 +26,6 @@ jobs:
         run: npm run format:ci
       - name: build
         run: npm run build
-      - name: package
-        run: npm run package
   tests:
     strategy:
       matrix:
@@ -51,30 +49,3 @@ jobs:
           path: "junit.xml"
           type: "junit"
           githubToken: ${{ secrets.GITHUB_TOKEN }}
-
-  # lint-and-format-check:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/setup-node@v2
-  #       with:
-  #         node-version: "16"
-  #         cache: "npm"
-  #     - name: Install Dependencies
-  #       run: npm ci --ignore-scripts
-  #     - name: lint
-  #       run: npm run lint:ci
-  #     - name: format check
-  #       run: npm run format:ci
-  #     - name: run tests
-  #       run: npm run test:ci
-  #     - name: run package
-  #       run: npm run package
-  #     - uses: inception-health/otel-upload-test-artifact-action@v1
-  #       if: always()
-  #       with:
-  #         jobName: "lint-and-test"
-  #         stepName: "run tests"
-  #         path: "junit.xml"
-  #         type: "junit"
-  #         githubToken: ${{ secrets.GITHUB_TOKEN }}
