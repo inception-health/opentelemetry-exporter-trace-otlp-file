@@ -107,8 +107,11 @@ describe("FileTraceExporter", () => {
     });
 
     it("should match snapshot", () => {
-      const trace = fs.readFileSync(FILE_PATH);
-      const expectedTrace = fs.readFileSync(EXPECTED_TRACE_FILE);
+      const trace = fs.readFileSync(FILE_PATH, { encoding: "utf8", flag: "r" });
+      const expectedTrace = fs.readFileSync(EXPECTED_TRACE_FILE, {
+        encoding: "utf8",
+        flag: "r",
+      });
       expect(trace).toEqual(expectedTrace);
     });
   });
