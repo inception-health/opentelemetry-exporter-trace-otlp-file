@@ -1,6 +1,6 @@
-import { SpanAttributes, diag } from "@opentelemetry/api";
+import { Attributes, diag } from "@opentelemetry/api";
 import { ExportResult, ExportResultCode } from "@opentelemetry/core";
-import { ExportServiceError } from "@opentelemetry/exporter-trace-otlp-http/build/src/types";
+import { ExportServiceError } from "@opentelemetry/otlp-exporter-base";
 import { FileExporterConfigBase } from "./types";
 
 export abstract class FileExporterBase<
@@ -9,7 +9,7 @@ export abstract class FileExporterBase<
   ServiceRequest
 > {
   public readonly filePath: string;
-  public readonly attributes?: SpanAttributes;
+  public readonly attributes?: Attributes;
   protected _concurrencyLimit: number;
   protected _isShutdown = false;
   private _shuttingDownPromise: Promise<void> = Promise.resolve();

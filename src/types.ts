@@ -1,7 +1,7 @@
-import { SpanAttributes } from "@opentelemetry/api";
+import { Attributes } from "@opentelemetry/api";
 
 export interface FileExporterConfigBase {
   filePath: string;
-  attributes?: SpanAttributes;
+  attributes?: Attributes;
   concurrencyLimit?: number;
 }
