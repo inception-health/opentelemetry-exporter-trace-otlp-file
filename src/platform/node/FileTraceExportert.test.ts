@@ -8,7 +8,6 @@ import { ExportResultCode } from "@opentelemetry/core";
 import * as path from "path";
 
 const FILE_PATH = path.join(__dirname, "trace.log");
-const EXPECTED_TRACE_FILE = path.join(__dirname, "__assets__", "otlptrace");
 
 export const mockedReadableSpan: ReadableSpan = {
   name: "documentFetch",
@@ -108,11 +107,7 @@ describe("FileTraceExporter", () => {
 
     it("should match snapshot", () => {
       const trace = fs.readFileSync(FILE_PATH, { encoding: "utf8", flag: "r" });
-      const expectedTrace = fs.readFileSync(EXPECTED_TRACE_FILE, {
-        encoding: "utf8",
-        flag: "r",
-      });
-      expect(trace).toEqual(expectedTrace);
+      expect(trace).toMatchSnapshot();
     });
   });
 
