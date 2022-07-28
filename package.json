@@ -12,7 +12,7 @@
     "format:ci": "prettier --check .",
     "prebuild": "rimraf dist",
     "build": "tsc",
-    "package": "npm run build && ncc build --source-map --license licenses.txt",
+    "prepublish": "npm run build",
     "test": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=./.env.test jest",
     "test:watch": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=./.env.test jest --watch",
     "test:ci": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=./.env.test jest --collect-coverage -ci"
@@ -25,7 +25,6 @@
     "@types/jest": "^28.1.6",
     "@typescript-eslint/eslint-plugin": "^5.7.0",
     "@typescript-eslint/parser": "^5.7.0",
-    "@vercel/ncc": "^0.34.0",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
     "eslint": "^8.4.1",
