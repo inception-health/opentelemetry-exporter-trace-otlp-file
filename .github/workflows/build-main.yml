@@ -45,7 +45,6 @@ jobs:
         with:
           token: "${{ secrets.BUILD_PAT }}"
           release-type: node
-          package-name: opentelemetry-exporter-trace-otlp-file
       - if: ${{ steps.release.outputs.release_created }}
         uses: actions/checkout@v2
       - if: ${{ steps.release.outputs.release_created }}
