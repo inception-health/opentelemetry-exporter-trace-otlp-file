@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.2](https://www.github.com/inception-health/opentelemetry-exporter-trace-otlp-file/compare/v1.0.1...v1.0.2) (2022-07-28)
+
+
+### Bug Fixes
+
+* prepublish build ([2c7b187](https://www.github.com/inception-health/opentelemetry-exporter-trace-otlp-file/commit/2c7b187b5d6270c2f3f99195916e069a3655cf33))
+
 ### [1.0.1](https://www.github.com/inception-health/opentelemetry-exporter-trace-otlp-file/compare/v1.0.0...v1.0.1) (2022-07-28)
 
 
