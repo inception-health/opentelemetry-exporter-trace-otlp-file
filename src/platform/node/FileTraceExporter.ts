@@ -1,16 +1,18 @@
 import { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace-base";
-import { otlpTypes } from "@opentelemetry/exporter-trace-otlp-http";
+import {
+  IExportTraceServiceRequest,
+  createExportTraceServiceRequest,
+} from "@opentelemetry/otlp-transformer";
 import { diag } from "@opentelemetry/api";
 import { FileExporterBase } from "../../FileExporterBase";
 import { FileExporterNodeConfig } from "./types";
-import { toFileExportTraceServiceRequest } from "../../transform";
 import * as fs from "fs";
 
 export class FileTraceExporter
   extends FileExporterBase<
     FileExporterNodeConfig,
     ReadableSpan,
-    otlpTypes.opentelemetryProto.collector.trace.v1.ExportTraceServiceRequest
+    IExportTraceServiceRequest
   >
   implements SpanExporter
 {
@@ -78,9 +80,7 @@ export class FileTraceExporter
     promise.then(popPromise, popPromise);
   }
 
-  convert(
-    spans: ReadableSpan[]
-  ): otlpTypes.opentelemetryProto.collector.trace.v1.ExportTraceServiceRequest {
-    return toFileExportTraceServiceRequest(spans, this, true);
+  convert(spans: ReadableSpan[]): IExportTraceServiceRequest {
+    return createExportTraceServiceRequest(spans, true);
   }
 }

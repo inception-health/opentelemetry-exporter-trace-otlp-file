@@ -73,17 +73,23 @@ describe("FileTraceExporter", () => {
   let spans: ReadableSpan[];
 
   describe("export", () => {
-    beforeEach(() => {
+    let resultCode: ExportResultCode | undefined = undefined;
+    beforeAll((done) => {
       collectorExporterConfig = {
         filePath: FILE_PATH,
         attributes: {},
       };
       collectorExporter = new FileTraceExporter(collectorExporterConfig);
       spans = [];
+      resultCode = undefined;
       spans.push(Object.assign({}, mockedReadableSpan));
+      collectorExporter.export(spans, ({ code, error }) => {
+        resultCode = code;
+        done(error);
+      });
     });
 
-    afterEach(async () => {
+    afterAll(async () => {
       await collectorExporter.shutdown();
 
       if (fs.existsSync(FILE_PATH)) {
@@ -91,15 +97,17 @@ describe("FileTraceExporter", () => {
       }
     });
 
-    it("should export traces to file", (done) => {
-      collectorExporter.export(spans, () => {
-        try {
-          expect(fs.existsSync(FILE_PATH)).toBeTruthy();
-          done();
-        } catch (error) {
-          done(error);
-        }
-      });
+    it("should have result code of success", () => {
+      expect(resultCode).toEqual(ExportResultCode.SUCCESS);
+    });
+
+    it("should export traces to file", () => {
+      expect(fs.existsSync(FILE_PATH)).toBeTruthy();
+    });
+
+    it("should match snapshot", () => {
+      const trace = fs.readFileSync(FILE_PATH, { encoding: "utf8", flag: "r" });
+      expect(trace).toMatchSnapshot();
     });
   });
 
