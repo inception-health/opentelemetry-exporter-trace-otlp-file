@@ -1,7 +1,6 @@
 import { Attributes } from "@opentelemetry/api";
 
-export interface FileExporterConfigBase {
-  filePath: string;
+export interface WriteStreamExporterConfigBase {
   attributes?: Attributes;
   concurrencyLimit?: number;
 }

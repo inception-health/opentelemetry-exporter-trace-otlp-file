@@ -1,14 +1,13 @@
 import { Attributes, diag } from "@opentelemetry/api";
 import { ExportResult, ExportResultCode } from "@opentelemetry/core";
 import { ExportServiceError } from "@opentelemetry/otlp-exporter-base";
-import { FileExporterConfigBase } from "./types";
+import { WriteStreamExporterConfigBase } from "./types";
 
-export abstract class FileExporterBase<
-  T extends FileExporterConfigBase,
+export abstract class WriteStreamExporterBase<
+  T extends WriteStreamExporterConfigBase,
   ExportItem,
   ServiceRequest
 > {
-  public readonly filePath: string;
   public readonly attributes?: Attributes;
   protected _concurrencyLimit: number;
   protected _isShutdown = false;
@@ -17,8 +16,6 @@ export abstract class FileExporterBase<
 
   /* istanbul ignore next */
   constructor(config: T = {} as T) {
-    this.filePath = config.filePath;
-
     this.attributes = config.attributes;
 
     this.shutdown = this.shutdown.bind(this);

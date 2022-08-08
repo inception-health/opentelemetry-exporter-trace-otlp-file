@@ -134,8 +134,6 @@ describe("FileTraceExporter", () => {
     it("should shutdown", async () => {
       await collectorExporter.shutdown();
       expect(collectorExporter.isShutdown()).toBeTruthy();
-      collectorExporter.onInit();
-      expect(collectorExporter.isShutdown()).toBeFalsy();
     });
 
     it("should error exporting when shutdown", (done) => {
