@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://www.github.com/inception-health/opentelemetry-exporter-trace-otlp-file/compare/v1.0.3...v1.1.0) (2023-07-21)
+
+
+### Features
+
+* refactored out WriteStreamTraceExporter class ([#8](https://www.github.com/inception-health/opentelemetry-exporter-trace-otlp-file/issues/8)) ([7eeee76](https://www.github.com/inception-health/opentelemetry-exporter-trace-otlp-file/commit/7eeee767c0c70003393084e8306e24d264a0fe84))
+
 ### [1.0.3](https://www.github.com/inception-health/opentelemetry-exporter-trace-otlp-file/compare/v1.0.2...v1.0.3) (2022-07-28)
 
 
